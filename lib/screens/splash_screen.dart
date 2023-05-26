@@ -16,6 +16,8 @@ class _SplashPageState extends State<SplashPage> {
   void initState() {
     super.initState();
     _lifecycleObserver = AppLifecycleObserver(onAppReady: _handleAppReady);
+
+    print(_lifecycleObserver);
   }
 
   void _handleAppReady(bool isReady) {
@@ -52,7 +54,17 @@ class _SplashPageState extends State<SplashPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Image.asset('assets/images/splash_image.png'),
+        child: Stack(
+          children: [
+            Image.asset('assets/images/splash_image.png'),
+            TextButton(
+              onPressed: () {
+                Navigator.pushReplacementNamed(context, '/home');
+              },
+              child: const Text('Lets Go!'),
+            ),
+          ],
+        ),
       ),
     );
   }

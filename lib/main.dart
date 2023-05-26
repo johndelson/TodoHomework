@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'models/todo.dart';
 import 'utils/date_utils.dart';
 
-import 'screens/splash_screen.dart';
+import 'screens/splash_screen1.dart';
 import 'screens/add_todo_screen.dart';
 import 'screens/todo_detail_screen.dart';
 import 'services/database.dart';
@@ -186,7 +186,8 @@ class _TodoListScreenState extends State<TodoListScreen> {
                   ? CircleAvatar(
                       backgroundImage: FileImage(File(todo.imageFilePath!)),
                     )
-                  : const Icon(Icons.photo), // Default icon if no image is uploaded
+                  : const Icon(
+                      Icons.photo), // Default icon if no image is uploaded
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [

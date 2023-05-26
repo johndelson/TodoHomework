@@ -6,7 +6,7 @@ class AppLifecycleObserver with WidgetsBindingObserver {
   final Function(bool isReady)? onAppReady;
 
   AppLifecycleObserver({this.onAppReady}) {
-    WidgetsBinding.instance!.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
@@ -44,7 +44,7 @@ class AppLifecycleObserver with WidgetsBindingObserver {
     // Replace this with your actual implementation to check database connectivity
     try {
       // Simulate checking database connectivity by adding a delay
-      await Future.delayed(Duration(seconds: 2));
+      await Future.delayed(const Duration(seconds: 2));
       // Assume the database connectivity check is successful
       isDatabaseReady = true;
     } catch (e) {
@@ -91,6 +91,6 @@ class AppLifecycleObserver with WidgetsBindingObserver {
   }
 
   void dispose() {
-    WidgetsBinding.instance!.removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
   }
 }
