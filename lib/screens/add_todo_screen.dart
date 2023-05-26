@@ -1,140 +1,132 @@
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 
 import '../models/todo.dart';
 import '../services/database.dart';
+import '../utils/date_utils.dart';
 
 class AddTodoScreen extends StatefulWidget {
-  static const routeName = '/add-todo';
-
-  const AddTodoScreen({super.key});
+  static const routeName = '/add_todo_screen';
+  final Todo? todo;
+  const AddTodoScreen({Key? key, this.todo}) : super(key: key);
 
   @override
   _AddTodoScreenState createState() => _AddTodoScreenState();
 }
 
 class _AddTodoScreenState extends State<AddTodoScreen> {
-  final _formKey = GlobalKey<FormState>();
+  late TextEditingController _todoController;
+  late TextEditingController _descriptionController;
+  late DateTime _dueDate;
+  String? _imageFilePath;
 
-  String _todo = '';
-  String _description = '';
-  DateTime _dueDate = DateTime.now();
-  File? _selectedImage;
-
-  Future<void> _selectDueDate(BuildContext context) async {
-    final currentDate = DateTime.now();
-    final selectedDate = await showDatePicker(
-      context: context,
-      initialDate: currentDate,
-      firstDate: currentDate,
-      lastDate: DateTime(currentDate.year + 1),
-    );
-    if (selectedDate != null) {
-      final selectedTime = await showTimePicker(
-        context: context,
-        initialTime: TimeOfDay.fromDateTime(currentDate),
-      );
-      if (selectedTime != null) {
-        setState(() {
-          _dueDate = DateTime(
-            selectedDate.year,
-            selectedDate.month,
-            selectedDate.day,
-            selectedTime.hour,
-            selectedTime.minute,
-          );
-        });
-      }
-    }
+  @override
+  void dispose() {
+    _todoController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
   }
 
-  Future<void> _selectImage() async {
-    final pickedFile = await FilePicker.platform.pickFiles(
-      type: FileType.image,
-      allowMultiple: false,
+  @override
+  void initState() {
+    super.initState();
+    _todoController = TextEditingController(text: widget.todo?.todo);
+    _descriptionController =
+        TextEditingController(text: widget.todo?.description);
+    _dueDate = widget.todo?.dueDate ?? DateTime.now();
+    _imageFilePath = widget.todo?.imageFilePath;
+  }
+
+  Future<void> _selectDueDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _dueDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
     );
-    if (pickedFile != null) {
+    if (picked != null && picked != _dueDate) {
       setState(() {
-        _selectedImage = File(pickedFile.files.single.path!);
+        _dueDate = picked;
       });
     }
   }
 
-  void _submitForm() async {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-      final todo = Todo(
-        todo: _todo,
-        description: _description,
-        dueDate: _dueDate,
-        completed: false,
-        imageFilePath: _selectedImage?.path,
-      );
-      await DatabaseService.instance.addTodo(todo);
-      Navigator.of(context).pop();
+  Future<void> _selectImage() async {
+    // Implement image selection logic here
+  }
+
+  void _saveTodo() async {
+    final newTodo = Todo(
+      todo: _todoController.text.trim(),
+      description: _descriptionController.text.trim(),
+      dueDate: _dueDate,
+      imageFilePath: _imageFilePath ?? '',
+      completed: false,
+    );
+
+    if (widget.todo == null) {
+      // Add new todo
+      await DatabaseService.instance.addTodo(newTodo);
+    } else {
+      // Update existing todo
+      final updatedTodo = newTodo.copyWith(
+          id: widget.todo!.id, completed: widget.todo!.completed);
+      await DatabaseService.instance.updateTodo(updatedTodo);
     }
+
+    Navigator.of(context).pop();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Todo'),
+        title: Text(widget.todo == null ? 'Add Todo' : 'Edit Todo'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Todo'),
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Please enter a todo';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _todo = value!;
-                },
+              TextField(
+                controller: _todoController,
+                decoration: const InputDecoration(
+                  labelText: 'Todo',
+                ),
               ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Description'),
-                onSaved: (value) {
-                  _description = value!;
-                },
+              TextField(
+                controller: _descriptionController,
+                decoration: const InputDecoration(
+                  labelText: 'Description',
+                ),
               ),
-              const SizedBox(height: 16.0),
+              const SizedBox(height: 16),
               Row(
                 children: [
-                  Expanded(
-                    child: Text(
-                      _dueDate != null
-                          ? 'Due Date: ${DateFormat.yMd().format(_dueDate)}'
-                          : 'No Due Date',
-                    ),
-                  ),
+                  const Text('Due Date:'),
+                  const SizedBox(width: 8),
                   TextButton(
                     onPressed: () => _selectDueDate(context),
-                    child: const Text('Select Due Date'),
+                    child: Text(DateUtil.formatDueDate(_dueDate)),
                   ),
                 ],
               ),
-              const SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: _submitForm,
-                child: const Text('Add Todo'),
-              ),
-              const SizedBox(height: 16.0),
-              ElevatedButton(
+              const SizedBox(height: 16),
+              TextButton(
                 onPressed: _selectImage,
-                child: const Text('Select Image'),
+                child: Row(
+                  children: [
+                    const Icon(Icons.photo),
+                    const SizedBox(width: 8),
+                    Text(_imageFilePath != null ? 'Change Image' : 'Add Image'),
+                  ],
+                ),
               ),
-              if (_selectedImage != null) Image.file(_selectedImage!),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: _saveTodo,
+                child: Text(widget.todo == null ? 'Add' : 'Save'),
+              ),
             ],
           ),
         ),

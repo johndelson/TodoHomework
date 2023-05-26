@@ -1,10 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-
 import 'models/todo.dart';
 import 'utils/date_utils.dart';
 
+import 'screens/splash_screen.dart';
 import 'screens/add_todo_screen.dart';
 import 'screens/todo_detail_screen.dart';
 import 'services/database.dart';
@@ -14,7 +14,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,8 +24,10 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: const TodoListScreen(),
+      initialRoute: '/splash',
       routes: {
+        '/splash': (context) => const SplashPage(),
+        '/home': (context) => const TodoListScreen(),
         AddTodoScreen.routeName: (context) => const AddTodoScreen(),
         TodoDetailScreen.routeName: (context) => const TodoDetailScreen(),
       },
@@ -34,7 +36,7 @@ class MyApp extends StatelessWidget {
 }
 
 class TodoListScreen extends StatefulWidget {
-  const TodoListScreen({super.key});
+  const TodoListScreen({Key? key}) : super(key: key);
 
   @override
   _TodoListScreenState createState() => _TodoListScreenState();
@@ -62,7 +64,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
 
   Future<void> _deleteTodoItem(int index) async {
     final confirmed = await showDialog<bool>(
-      context: this.context,
+      context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Delete Todo'),
@@ -70,13 +72,13 @@ class _TodoListScreenState extends State<TodoListScreen> {
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                Navigator.of(this.context).pop(false);
+                Navigator.of(context).pop(false);
               },
               child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
-                Navigator.of(this.context).pop(true);
+                Navigator.of(context).pop(true);
               },
               child: const Text('Delete'),
             ),
@@ -86,7 +88,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
     );
 
     if (confirmed == true) {
-      await DatabaseService.instance.deleteTodoById(_todos[index].id as int);
+      await DatabaseService.instance.deleteTodoById(_todos[index].id!);
       setState(() {
         _todos.removeAt(index);
       });
@@ -133,6 +135,18 @@ class _TodoListScreenState extends State<TodoListScreen> {
     );
   }
 
+  void _navigateToEditTodoScreen(Todo todo) {
+    Navigator.of(context)
+        .push(
+      MaterialPageRoute(
+        builder: (context) => AddTodoScreen(todo: todo),
+      ),
+    )
+        .then((_) {
+      _loadTodos();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -143,27 +157,57 @@ class _TodoListScreenState extends State<TodoListScreen> {
         itemCount: _todos.length,
         itemBuilder: (context, index) {
           final todo = _todos[index];
-          return ListTile(
-            onTap: () => _navigateToTodoDetailScreen(todo),
-            title: Text(todo.todo),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(todo.description ?? ''),
-                Text(DateUtil.formatDueDate(todo.dueDate)),
-              ],
-            ),
-            leading: _todos[index].imageFilePath != null
-                ? CircleAvatar(
-                    backgroundImage:
-                        FileImage(File(_todos[index].imageFilePath!)),
-                  )
-                : SizedBox(width: 40), //
-            trailing: Checkbox(
-              value: _todos[index].completed,
-              onChanged: (bool? value) {
-                _updateTodoCompleted(index, value);
-              },
+          return Card(
+            elevation: 4,
+            color: todo.completed ? Colors.grey[300] : Colors.white,
+            child: ListTile(
+              onTap: () => _navigateToTodoDetailScreen(todo),
+              title: Text(
+                todo.todo,
+                style: TextStyle(
+                  decoration:
+                      todo.completed ? TextDecoration.lineThrough : null,
+                ),
+              ),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(todo.description ?? ''),
+                  Text(
+                    DateUtil.formatDueDate(todo.dueDate),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: todo.completed ? Colors.grey : Colors.black,
+                    ),
+                  ),
+                ],
+              ),
+              leading: todo.imageFilePath != null
+                  ? CircleAvatar(
+                      backgroundImage: FileImage(File(todo.imageFilePath!)),
+                    )
+                  : const Icon(Icons.photo), // Default icon if no image is uploaded
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.edit),
+                    color: Colors.blue,
+                    onPressed: () => _navigateToEditTodoScreen(todo),
+                  ),
+                  Checkbox(
+                    value: todo.completed,
+                    onChanged: (bool? value) {
+                      _updateTodoCompleted(index, value);
+                    },
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.delete),
+                    color: Colors.red,
+                    onPressed: () => _deleteTodoItem(index),
+                  ),
+                ],
+              ),
             ),
           );
         },

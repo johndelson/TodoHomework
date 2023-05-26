@@ -7,9 +7,9 @@ import '../services/database.dart';
 import '../utils/date_utils.dart';
 
 class TodoDetailScreen extends StatelessWidget {
-  static const routeName = '/todo-detail';
+  static const routeName = '/todo_detail_screen';
 
-  const TodoDetailScreen({super.key});
+  const TodoDetailScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,15 +25,37 @@ class TodoDetailScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Todo: ${todo.todo}',
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              todo.todo,
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            const SizedBox(height: 8.0),
-            Text('Description: ${todo.description}'),
-            const SizedBox(height: 8.0),
-            Text('Due Date: ${DateUtil.formatDueDate(todo.dueDate)}'),
-            const SizedBox(height: 8.0),
-            Text('Completed: ${todo.completed ? 'Yes' : 'No'}'),
+            const SizedBox(height: 16),
+            const Text(
+              'Description:',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(todo.description ?? ''),
+            const SizedBox(height: 16),
+            const Text(
+              'Due Date:',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(DateUtil.formatDueDate(todo.dueDate)),
+            const SizedBox(height: 16),
+            const Text(
+              'Completed:',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(todo.completed ? 'Yes' : 'No'),
+            const SizedBox(height: 16),
             if (todo.imageFilePath != null)
               Image.file(
                 File(todo.imageFilePath!),
