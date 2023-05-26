@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 import '../models/todo.dart';
@@ -17,6 +20,7 @@ class _AddTodoScreenState extends State<AddTodoScreen> {
   late TextEditingController _todoController;
   late TextEditingController _descriptionController;
   late DateTime _dueDate;
+  File? _selectedImage;
   String? _imageFilePath;
 
   @override
@@ -51,7 +55,22 @@ class _AddTodoScreenState extends State<AddTodoScreen> {
   }
 
   Future<void> _selectImage() async {
-    // Implement image selection logic here
+    final pickedFile = await FilePicker.platform.pickFiles(
+      type: FileType.image,
+      allowMultiple: false,
+    );
+
+    if (pickedFile != null) {
+      setState(() {
+        _selectedImage = File(pickedFile.files.single.path!);
+      });
+    }
+  }
+
+  void _resetSelectedImage() {
+    setState(() {
+      _selectedImage = null;
+    });
   }
 
   void _saveTodo() async {

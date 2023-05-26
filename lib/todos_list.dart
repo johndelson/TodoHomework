@@ -51,8 +51,7 @@ class _TodosListState extends State<TodosList> {
     sqfliteFfiInit();
     _database = openDatabase(join(await getDatabasesPath(), 'database.db'),
         version: 1, onCreate: (Database db, int version) async {
-      await db.execute(
-          '''
+      await db.execute('''
         CREATE TABLE IF NOT EXISTS todos(
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           todo TEXT,

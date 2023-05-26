@@ -1,4 +1,3 @@
-
 class DateUtil {
   static String formatDueDate(DateTime dueDate) {
     final now = DateTime.now();
