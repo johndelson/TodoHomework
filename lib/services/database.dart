@@ -1,5 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import '../models/todo.dart';
 
@@ -14,7 +15,11 @@ class DatabaseService {
 
   Future<Database> get database async {
     Database? instance = _database;
+
     if (instance != null) return instance;
+    // Initialize the databaseFactory
+    databaseFactory = databaseFactoryFfi;
+    sqfliteFfiInit();
     instance = await _initDatabase();
     _database = instance;
     return instance;
@@ -23,6 +28,7 @@ class DatabaseService {
   Future<Database> _initDatabase() async {
     final String databasesPath = await getDatabasesPath();
     final String path = join(databasesPath, _databaseName);
+
     return await openDatabase(
       path,
       version: _databaseVersion,
@@ -34,7 +40,7 @@ class DatabaseService {
     await db.execute(
       '''
       CREATE TABLE todos (
-        id INTEGER PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,,
         todo TEXT,
         description TEXT,
         dueDate INTEGER,
@@ -56,6 +62,16 @@ class DatabaseService {
       'todos',
       where: 'id = ?',
       whereArgs: [id],
+    );
+  }
+
+  Future<void> updateTodo(Todo updatedTodo) async {
+    final db = await database;
+    await db.update(
+      'todos',
+      updatedTodo.toMap(),
+      where: 'id = ?',
+      whereArgs: [updatedTodo.id],
     );
   }
 

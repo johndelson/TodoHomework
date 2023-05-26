@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
@@ -51,12 +52,13 @@ class _AddTodoScreenState extends State<AddTodoScreen> {
   }
 
   Future<void> _selectImage() async {
-    final pickedFile =
-        await ImagePicker().getImage(source: ImageSource.gallery);
-
+    final pickedFile = await FilePicker.platform.pickFiles(
+      type: FileType.image,
+      allowMultiple: false,
+    );
     if (pickedFile != null) {
       setState(() {
-        _selectedImage = File(pickedFile.path);
+        _selectedImage = File(pickedFile.files.single.path!);
       });
     }
   }
