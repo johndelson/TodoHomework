@@ -1,8 +1,6 @@
 # This is a generated file; do not edit or check into version control.
-connectivity=C:\\Users\\Jd\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\connectivity-3.0.6\\
-connectivity_for_web=C:\\Users\\Jd\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\connectivity_for_web-0.4.0+1\\
-connectivity_macos=C:\\Users\\Jd\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\connectivity_macos-0.2.1+2\\
-file_picker=C:\\Users\\Jd\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\file_picker-4.6.1\\
+connectivity_plus=C:\\Users\\Jd\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\connectivity_plus-4.0.1\\
+file_picker=C:\\Users\\Jd\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\file_picker-5.3.1\\
 flutter_native_image=C:\\Users\\Jd\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\flutter_native_image-0.0.6+1\\
 flutter_plugin_android_lifecycle=C:\\Users\\Jd\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\flutter_plugin_android_lifecycle-2.0.15\\
 fluttertoast=C:\\Users\\Jd\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\fluttertoast-8.2.2\\
@@ -14,7 +12,7 @@ path_provider=C:\\Users\\Jd\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\path_p
 path_provider_android=C:\\Users\\Jd\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\path_provider_android-2.0.27\\
 path_provider_foundation=C:\\Users\\Jd\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\path_provider_foundation-2.2.3\\
 path_provider_linux=C:\\Users\\Jd\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\path_provider_linux-2.1.11\\
-path_provider_windows=C:\\Users\\Jd\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\path_provider_windows-2.0.7\\
+path_provider_windows=C:\\Users\\Jd\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\path_provider_windows-2.1.6\\
 permission_handler=C:\\Users\\Jd\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\permission_handler-10.2.0\\
 permission_handler_android=C:\\Users\\Jd\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\permission_handler_android-10.2.1\\
 permission_handler_apple=C:\\Users\\Jd\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\permission_handler_apple-9.0.8\\
