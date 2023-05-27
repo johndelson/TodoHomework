@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-
+import 'package:path/path.dart';
 import '../models/todo.dart';
 import '../services/database.dart';
 import '../utils/date_utils.dart';
@@ -17,7 +17,7 @@ class TodoDetailScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Todo Detail'),
+        title: Text('Todo Detail'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -26,36 +26,36 @@ class TodoDetailScreen extends StatelessWidget {
           children: [
             Text(
               todo.todo,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 16),
-            const Text(
+            SizedBox(height: 16),
+            Text(
               'Description:',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
               ),
             ),
             Text(todo.description ?? ''),
-            const SizedBox(height: 16),
-            const Text(
+            SizedBox(height: 16),
+            Text(
               'Due Date:',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
               ),
             ),
             Text(DateUtil.formatDueDate(todo.dueDate)),
-            const SizedBox(height: 16),
-            const Text(
+            SizedBox(height: 16),
+            Text(
               'Completed:',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
               ),
             ),
-            Text(todo.completed ? 'Yes' : 'No'),
-            const SizedBox(height: 16),
+            Text('${todo.completed ? 'Yes' : 'No'} ${todo.imageFilePath}'),
+            SizedBox(height: 16),
             if (todo.imageFilePath != null)
               Image.file(
                 File(todo.imageFilePath!),
@@ -65,13 +65,6 @@ class TodoDetailScreen extends StatelessWidget {
               ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          await DatabaseService.instance.deleteTodoById(todo.id as int);
-          Navigator.of(context).pop();
-        },
-        child: const Icon(Icons.delete),
       ),
     );
   }

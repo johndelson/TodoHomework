@@ -37,7 +37,15 @@ class DatabaseService {
   Future<void> addTodo(Todo todo) async {
     final db = await database;
     final store = intMapStoreFactory.store('todos');
-    await store.add(db, todo.toMap());
+
+    final finder = Finder(sortOrders: [SortOrder('id', false)]);
+    final snapshots = await store.find(db, finder: finder);
+
+    int maxId = snapshots.isNotEmpty ? snapshots.first['id'] as int : 0;
+    final newId = maxId + 1;
+
+    final todoWithId = todo.copyWith(id: newId);
+    await store.add(db, todoWithId.toMap());
   }
 
   Future<void> deleteTodoById(int id) async {
@@ -47,9 +55,11 @@ class DatabaseService {
   }
 
   Future<void> updateTodo(Todo updatedTodo) async {
-    final db = await database;
-    final store = intMapStoreFactory.store('todos');
-    await store.record(updatedTodo.id as int).put(db, updatedTodo.toMap());
+    if (updatedTodo.id != null) {
+      final db = await database;
+      final store = intMapStoreFactory.store('todos');
+      await store.record(updatedTodo.id!).put(db, updatedTodo.toMap());
+    }
   }
 
   Future<List<Todo>> getAllTodos() async {

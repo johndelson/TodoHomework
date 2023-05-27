@@ -163,7 +163,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
             child: ListTile(
               onTap: () => _navigateToTodoDetailScreen(todo),
               title: Text(
-                todo.todo,
+                '${todo.id}, ${todo.todo}',
                 style: TextStyle(
                   decoration:
                       todo.completed ? TextDecoration.lineThrough : null,

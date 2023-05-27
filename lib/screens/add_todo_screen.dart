@@ -1,8 +1,7 @@
-import 'dart:io';
-
+import 'package:path/path.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-
+import 'dart:io';
 import '../models/todo.dart';
 import '../services/database.dart';
 import '../utils/date_utils.dart';
@@ -78,7 +77,7 @@ class _AddTodoScreenState extends State<AddTodoScreen> {
       todo: _todoController.text.trim(),
       description: _descriptionController.text.trim(),
       dueDate: _dueDate,
-      imageFilePath: _imageFilePath ?? '',
+      imageFilePath: _selectedImage != null ? _selectedImage!.path : null,
       completed: false,
     );
 
@@ -92,7 +91,7 @@ class _AddTodoScreenState extends State<AddTodoScreen> {
       await DatabaseService.instance.updateTodo(updatedTodo);
     }
 
-    Navigator.of(context).pop();
+    Navigator.of(this.context).pop();
   }
 
   @override
@@ -141,6 +140,14 @@ class _AddTodoScreenState extends State<AddTodoScreen> {
                   ],
                 ),
               ),
+              const SizedBox(height: 16),
+              if (_imageFilePath != null)
+                Image.file(
+                  File(_imageFilePath!),
+                  fit: BoxFit.cover,
+                  height: 200,
+                  width: double.infinity,
+                ),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: _saveTodo,
