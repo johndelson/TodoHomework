@@ -1,3 +1,7 @@
 build/
 .dart_tool/
 .idea/
+android/app/google-services.json
+lib/firebase-options.dart
+
+lib/firebase_options.dart

@@ -8,9 +8,46 @@ import 'screens/splash_screen1.dart';
 import 'screens/add_todo_screen.dart';
 import 'screens/todo_detail_screen.dart';
 import 'services/database.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_cloud_messaging_flutter/firebase_cloud_messaging_flutter.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  // addSampleData();
   runApp(const MyApp());
+}
+
+void addSampleData() async {
+  final List<Todo> sampleTodos = [
+    Todo(
+      todo: 'Complete assignment',
+      description: 'Finish the project before the deadline',
+      dueDate: DateTime(2023, 6, 15),
+      completed: false,
+    ),
+    Todo(
+      todo: 'Buy groceries',
+      description: 'Get milk, eggs, and bread',
+      dueDate: DateTime(2023, 6, 10),
+      completed: false,
+    ),
+    Todo(
+      todo: 'Exercise',
+      description: 'Go for a jog in the morning',
+      dueDate: DateTime(2023, 6, 12),
+      completed: false,
+    ),
+  ];
+
+  for (final todo in sampleTodos) {
+    await DatabaseService.instance.addTodo(todo);
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -88,7 +125,8 @@ class _TodoListScreenState extends State<TodoListScreen> {
     );
 
     if (confirmed == true) {
-      await DatabaseService.instance.deleteTodoById(_todos[index].id!);
+      await DatabaseService.instance
+          .deleteTodoById(_todos[index].id.toString());
       setState(() {
         _todos.removeAt(index);
       });
@@ -163,7 +201,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
             child: ListTile(
               onTap: () => _navigateToTodoDetailScreen(todo),
               title: Text(
-                '${todo.id}, ${todo.todo}',
+                '${todo.todo}',
                 style: TextStyle(
                   decoration:
                       todo.completed ? TextDecoration.lineThrough : null,
